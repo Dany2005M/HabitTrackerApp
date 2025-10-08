@@ -58,6 +58,7 @@ public class HabitManager {
     public void nextDay(){
         for(Habit habit : habits) {
             if(!habit.isDone()){
+                habit.addStreakToList(habit.getStreak());
                 habit.setStreak(0);
             }
             habit.unDone();
@@ -73,13 +74,26 @@ public class HabitManager {
     }
 
     public void weeklySummary(){
+        summary.setLength(0);
+        if(habits.isEmpty()){
+            summary.append("No habits tracked this week");
+            return;
+        }
         int max = Integer.MIN_VALUE;
         String maxHabitName = "";
         for(Habit habit : habits){
-            if(habit.getStreak() > max){
-                max = habit.getStreak();
+            int maxStreak = Integer.MIN_VALUE;
+            for(int streak : habit.getStreakList()){
+                if(streak > maxStreak){
+                    maxStreak = streak;
+                }
+            }
+            if(maxStreak > max){
+                max = maxStreak;
                 maxHabitName = habit.getName();
             }
+
+
 
             summary.append(habit.getName()).append(" | ").append(habit.getTotaldone()).append(" days out of 7").append(" | ").append((int) Math.round(((double)habit.getTotaldone()/7)*100)).append("% completion\n");
 
@@ -87,7 +101,20 @@ public class HabitManager {
         }
         summary.append("Longest habit streak: ").append(maxHabitName).append(" | ").append("Streak ").append(max<0?0:max);
         //System.out.println("Longest habit streak: " + maxHabitName + " | " + "Streak " + max);
+        clearTotalDone();
+        clearStreakList();
+    }
 
+    public void clearStreakList(){
+        for(Habit habit : habits){
+            habit.getStreakList().clear();
+        }
+    }
+
+    public void clearTotalDone(){
+        for(Habit habit : habits){
+            habit.setTotaldone(0);
+        }
     }
 
 

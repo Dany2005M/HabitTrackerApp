@@ -5,9 +5,9 @@ public class HabitTrackerGUI {
 
     private final JFrame frame;
     private final JPanel panel;
-    private JPanel inputPanel;
-    private JPanel listPanel;
-    private JPanel buttonPanel;
+    private final JPanel inputPanel;
+    private final JPanel listPanel;
+    private final JPanel buttonPanel;
     final HabitManager manager = new HabitManager();
 
     public HabitTrackerGUI() {
@@ -103,7 +103,6 @@ public class HabitTrackerGUI {
             if((manager.getDaycounter()-1) % 7 == 0){
                 manager.weeklySummary();
                 JOptionPane.showMessageDialog(frame, manager.getSummary().toString());
-
             }
         });
 
