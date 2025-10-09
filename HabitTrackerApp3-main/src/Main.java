@@ -11,13 +11,20 @@ public class Main {
 
         System.out.println("Day 1\n");
         while (flag) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Options Menu\n").append("1. Add Habit\n").append("2. Remove Habit\n").append("3. List Habits\n").append("4. Mark habit as done\n").append("5. Go to the next day\n").append("6. Show a weekly summary\n").append("7. Exit\n");
-            System.out.print(sb);
+            System.out.print("""
+                    Options Menu
+                    1. Add Habit
+                    2. Remove Habit
+                    3. List Habits
+                    4. Mark habit as done
+                    5. Go to the next day
+                    6. Show a weekly summary
+                    7. Exit
+                    """);
             input = scanner.nextLine();
-            if((habits.getDaycounter()) % 7 == 0){
+            if((habits.getDayCounter()) % 7 == 0){
                 habits.weeklySummary();
-                System.out.println(habits.getSummary().toString());
+                System.out.println(habits.getSummary());
             }
             switch (input) {
                 case "1" -> {
@@ -47,11 +54,9 @@ public class Main {
                         System.out.println("Habit marked as done");
                     }
                 }
-                case "5" -> {
-                    habits.nextDay();
-                }
+                case "5" -> habits.nextDay();
                 case "6" -> {
-                    if (habits.getDaycounter() == 7) {
+                    if (habits.getDayCounter() == 7) {
                         habits.weeklySummary();
                     } else {
                         System.out.println("You need to finish a week");

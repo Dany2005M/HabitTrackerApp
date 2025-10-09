@@ -6,10 +6,6 @@ import java.awt.event.FocusEvent;
 public class HabitTrackerGUI {
 
     private final JFrame frame;
-    private final JPanel panel;
-    private final JPanel inputPanel;
-    private final JPanel listPanel;
-    private final JPanel buttonPanel;
     final HabitManager manager = new HabitManager();
 
     public HabitTrackerGUI() {
@@ -17,26 +13,26 @@ public class HabitTrackerGUI {
         frame.setSize(400, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        panel = new JPanel();
+        JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         frame.add(panel);
 
 
 
-        JLabel dayLabel = new JLabel("Day " + manager.getDaycounter());
+        JLabel dayLabel = new JLabel("Day " + manager.getDayCounter());
         dayLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         dayLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
         panel.add(dayLabel, BorderLayout.NORTH);
         dayLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
-        inputPanel = new JPanel(new BorderLayout(5, 5));
+        JPanel inputPanel = new JPanel(new BorderLayout(5, 5));
         PlaceholderTextField habitField = new PlaceholderTextField("Please type the habit you want to add", 15);
         JButton addButton = new JButton("Add Habit");
         inputPanel.add(habitField, BorderLayout.CENTER);
         inputPanel.add(addButton, BorderLayout.EAST);
 
-        buttonPanel = new JPanel(new GridLayout(1,4,10,10));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         JButton removeButton = new JButton("Remove Habit");
         JButton markDoneButton = new JButton("Mark as Done");
         JButton nextDayButton = new JButton("Next Day");
@@ -51,7 +47,7 @@ public class HabitTrackerGUI {
         habitList.setFixedCellHeight(25);
         habitList.setFont(new Font("SansSerif", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(habitList);
-        listPanel = new JPanel(new BorderLayout());
+        JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.add(inputPanel, BorderLayout.NORTH);
         listPanel.add(scrollPane, BorderLayout.CENTER);
         panel.add(listPanel, BorderLayout.CENTER);
@@ -105,10 +101,15 @@ public class HabitTrackerGUI {
         nextDayButton.addActionListener(e -> {
 
             manager.nextDay();
-            dayLabel.setText("Day " + manager.getDaycounter());
-            if((manager.getDaycounter()-1) % 7 == 0){
+            dayLabel.setText("Day " + manager.getDayCounter());
+            if((manager.getDayCounter()-1) % 7 == 0){
                 manager.weeklySummary();
                 JOptionPane.showMessageDialog(frame, manager.getSummary().toString());
+            }
+            for(int i = 0; i < listModel.getSize(); i++ ){
+                String habit = listModel.getElementAt(i);
+                String rawHabitName = habit.replaceAll("\\s*✅$", "").trim();
+                listModel.set(i, rawHabitName);
             }
         });
 
@@ -127,7 +128,7 @@ public class HabitTrackerGUI {
 
 class PlaceholderTextField extends JTextField {
 
-    private String placeholder;
+    private final String placeholder;
     private boolean placeholderShown;
 
     public PlaceholderTextField(String placeholder, int columns){

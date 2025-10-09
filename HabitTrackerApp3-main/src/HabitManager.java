@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class HabitManager {
-    private ArrayList<Habit> habits = new ArrayList<>();
+    private final ArrayList<Habit> habits = new ArrayList<>();
 
     public void addHabit(String habitName){
         if(habitInList(habitName) == null){
@@ -49,10 +49,10 @@ public class HabitManager {
         }
     }
 
-    protected int daycounter = 1;
+    protected int dayCounter = 1;
 
-    public int getDaycounter() {
-        return daycounter;
+    public int getDayCounter() {
+        return dayCounter;
     }
 
     public void nextDay(){
@@ -63,11 +63,11 @@ public class HabitManager {
             }
             habit.unDone();
         }
-        daycounter++;
-        System.out.println("Day " + daycounter + "\n");
+        dayCounter++;
+        System.out.println("Day " + dayCounter + "\n");
     }
 
-    private StringBuilder summary = new StringBuilder();
+    private final StringBuilder summary = new StringBuilder();
 
     public StringBuilder getSummary() {
         return summary;
@@ -92,15 +92,10 @@ public class HabitManager {
                 max = maxStreak;
                 maxHabitName = habit.getName();
             }
+            summary.append(habit.getName()).append(" | ").append(habit.getTotalDone()).append(" days out of 7").append(" | ").append((int) Math.round(((double)habit.getTotalDone()/7)*100)).append("% completion\n");
 
-
-
-            summary.append(habit.getName()).append(" | ").append(habit.getTotaldone()).append(" days out of 7").append(" | ").append((int) Math.round(((double)habit.getTotaldone()/7)*100)).append("% completion\n");
-
-            //System.out.println(habit.getName() + " | " + habit.getTotaldone() + " days out of 7" + " | " + Integer.parseInt(String.format("%.2f",(double)habit.getTotaldone()/7))*100 + "% completion\n");
         }
-        summary.append("Longest habit streak: ").append(maxHabitName).append(" | ").append("Streak ").append(max<0?0:max);
-        //System.out.println("Longest habit streak: " + maxHabitName + " | " + "Streak " + max);
+        summary.append("Longest habit streak: ").append(maxHabitName).append(" | ").append("Streak ").append(Math.max(max, 0));
         clearTotalDone();
         clearStreakList();
     }
@@ -113,7 +108,7 @@ public class HabitManager {
 
     public void clearTotalDone(){
         for(Habit habit : habits){
-            habit.setTotaldone(0);
+            habit.setTotalDone(0);
         }
     }
 

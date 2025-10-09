@@ -3,9 +3,9 @@ import java.util.ArrayList;
 public class Habit {
 
     private boolean done;
-    private String name;
+    private final String name;
     private int streak;
-    private int totaldone = 0;
+    private int totalDone = 0;
     private ArrayList<Integer> streaks = new ArrayList<>();
     public Habit(String name) {
         this.done = false;
@@ -17,7 +17,7 @@ public class Habit {
         if (!done) {
             done = true;
             streak++;
-            totaldone++;
+            totalDone++;
         }
     }
 
@@ -49,15 +49,12 @@ public class Habit {
         this.streak = streak;
     }
 
-    public int getTotaldone() {
-        return totaldone;
+    public int getTotalDone() {
+        return totalDone;
     }
 
-    public void setTotaldone(int totaldone) {
-        this.totaldone = totaldone;
+    public void setTotalDone(int totalDone) {
+        this.totalDone = totalDone;
     }
 
-    public void setStreaks(ArrayList<Integer> streaks) {
-        this.streaks = streaks;
-    }
 }
