@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class HabitTrackerGUI {
 
@@ -29,7 +31,7 @@ public class HabitTrackerGUI {
         dayLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
         inputPanel = new JPanel(new BorderLayout(5, 5));
-        JTextField habitField = new JTextField(1);
+        PlaceholderTextField habitField = new PlaceholderTextField("Please type the habit you want to add", 15);
         JButton addButton = new JButton("Add Habit");
         inputPanel.add(habitField, BorderLayout.CENTER);
         inputPanel.add(addButton, BorderLayout.EAST);
@@ -81,12 +83,16 @@ public class HabitTrackerGUI {
 
         markDoneButton.addActionListener(e -> {
             String selectedHabit = habitList.getSelectedValue();
-            if(selectedHabit != null) {
-                if(manager.habitInList(selectedHabit).isDone()){
-                    JOptionPane.showMessageDialog(frame, selectedHabit + " has already been marked as Done");
+            String rawHabitName = selectedHabit.replaceAll("\\s*✅$", "").trim();
+            int selectedIndex = habitList.getSelectedIndex();
+            if(manager.habitInList(rawHabitName) != null) {
+                if(manager.habitInList(rawHabitName).isDone()){
+                    JOptionPane.showMessageDialog(frame, manager.habitInList(rawHabitName).getName() + " has already been marked as Done");
                 }
                 else {
                     manager.markHabitAsComplete(selectedHabit);
+                    String doneHabit = selectedHabit + " ✅";
+                    listModel.set(selectedIndex, doneHabit);
                     JOptionPane.showMessageDialog(frame, selectedHabit + " marked as Done");
                 }
             }
@@ -116,5 +122,49 @@ public class HabitTrackerGUI {
         new HabitTrackerGUI();
     }
 
+
+}
+
+class PlaceholderTextField extends JTextField {
+
+    private String placeholder;
+    private boolean placeholderShown;
+
+    public PlaceholderTextField(String placeholder, int columns){
+        super(columns);
+        this.placeholder = placeholder;
+        showPlaceholder();
+
+
+
+        this.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e){
+                if(placeholderShown){
+                    setText("");
+                    setForeground(Color.BLACK);
+                    placeholderShown= false;
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e){
+
+                if(getText().isEmpty()){
+                    showPlaceholder();
+                }
+
+            }
+    });
+}
+
+private void showPlaceholder(){
+        setText(placeholder);
+        setForeground(Color.GRAY);
+        placeholderShown = true;
+}
+@Override
+public String getText(){
+        return placeholderShown ? "" : super.getText();
+}
 
 }
