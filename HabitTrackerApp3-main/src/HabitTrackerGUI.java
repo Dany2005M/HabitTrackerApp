@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HabitTrackerGUI {
 
@@ -9,6 +10,7 @@ public class HabitTrackerGUI {
     final HabitManager manager = new HabitManager();
 
     public HabitTrackerGUI() {
+        AtomicBoolean isLoaded = new AtomicBoolean(false);
         frame = new JFrame("Habit Tracker");
         frame.setSize(400, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,9 +38,13 @@ public class HabitTrackerGUI {
         JButton removeButton = new JButton("Remove Habit");
         JButton markDoneButton = new JButton("Mark as Done");
         JButton nextDayButton = new JButton("Next Day");
+        JButton saveButton = new JButton("Save");
+        JButton loadButton = new JButton("Load");
         buttonPanel.add(removeButton);
         buttonPanel.add(markDoneButton);
         buttonPanel.add(nextDayButton);
+        buttonPanel.add(saveButton);
+        buttonPanel.add(loadButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
         DefaultListModel<String> listModel = new DefaultListModel<>();
@@ -77,23 +83,45 @@ public class HabitTrackerGUI {
 
         });
 
+        saveButton.addActionListener(e -> {
+            manager.saveToFile("habits.txt");
+            isLoaded.set(false);
+        });
+        loadButton.addActionListener(e -> {
+            if(!isLoaded.get()) {
+                manager.loadFromFile("habits.txt");
+                for (Habit habit : manager.getHabits()) {
+                    if (habit.isDone()) {
+                        listModel.addElement(habit.getName() + " ✅");
+                    } else {
+                        listModel.addElement(habit.getName());
+                    }
+                }
+                dayLabel.setText("Day " + manager.getDayCounter());
+                isLoaded.set(true);
+            }
+        });
+
         markDoneButton.addActionListener(e -> {
             String selectedHabit = habitList.getSelectedValue();
-            String rawHabitName = selectedHabit.replaceAll("\\s*✅$", "").trim();
-            int selectedIndex = habitList.getSelectedIndex();
-            if(manager.habitInList(rawHabitName) != null) {
-                if(manager.habitInList(rawHabitName).isDone()){
-                    JOptionPane.showMessageDialog(frame, manager.habitInList(rawHabitName).getName() + " has already been marked as Done");
-                }
-                else {
-                    manager.markHabitAsComplete(selectedHabit);
-                    String doneHabit = selectedHabit + " ✅";
-                    listModel.set(selectedIndex, doneHabit);
-                    JOptionPane.showMessageDialog(frame, selectedHabit + " marked as Done");
-                }
-            }
-            else{
+            if(selectedHabit == null){
                 JOptionPane.showMessageDialog(frame, "Please select a Habit to Mark as Done");
+            }
+            else {
+                String rawHabitName = selectedHabit.replaceAll("\\s*✅$", "").trim();
+                int selectedIndex = habitList.getSelectedIndex();
+                if (manager.habitInList(rawHabitName) != null) {
+                    if (manager.habitInList(rawHabitName).isDone()) {
+                        JOptionPane.showMessageDialog(frame, manager.habitInList(rawHabitName).getName() + " has already been marked as Done");
+                    } else {
+                        manager.markHabitAsComplete(selectedHabit);
+                        String doneHabit = selectedHabit + " ✅";
+                        listModel.set(selectedIndex, doneHabit);
+                        JOptionPane.showMessageDialog(frame, selectedHabit + " marked as Done");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Please select a Habit to Mark as Done");
+                }
             }
 
         });

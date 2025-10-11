@@ -1,7 +1,58 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class HabitManager {
     private final ArrayList<Habit> habits = new ArrayList<>();
+
+    public void saveToFile(String fileName) {
+        try(FileWriter writer = new FileWriter(fileName)){
+            writer.write(dayCounter + "\n");
+            for(Habit habit : habits){
+                writer.write(habit.getName() + "," +
+                                habit.isDone() + "," +
+                                habit.getStreak() + "," +
+                                habit.getTotalDone() + "\n");
+            }
+            System.out.println("Habits saved successfully!");
+        }
+        catch (IOException e){
+            System.out.println("Error saving habits to file: " + e.getMessage());
+        }
+    }
+
+    public void loadFromFile(String fileName){
+        habits.clear();
+
+        try(Scanner scanner = new Scanner(new File(fileName))){
+            if(scanner.hasNextLine()){
+                dayCounter = Integer.parseInt(scanner.nextLine().trim());
+            }
+            while(scanner.hasNextLine()){
+                String input = scanner.nextLine();
+                String[] data = input.split(",");
+
+                if(data.length == 4){
+                    Habit habit = new Habit(data[0]);
+                    if(Boolean.parseBoolean(data[1])){
+                        habit.setDone();
+                    }habit.setStreak(Integer.parseInt(data[2]));
+
+
+                    habit.setTotalDone(Integer.parseInt(data[3]));
+
+
+                    habits.add(habit);
+                }
+
+            } System.out.println("Habit loaded successfully!");
+
+        }catch(IOException e){
+            System.out.println("Error loading habits from file: " + e.getMessage());
+        }
+    }
 
     public void addHabit(String habitName){
         if(habitInList(habitName) == null){
@@ -124,6 +175,10 @@ public class HabitManager {
 
     public boolean isEmpty(){
         return habits.isEmpty();
+    }
+
+    public ArrayList<Habit> getHabits() {
+        return habits;
     }
 }
 
